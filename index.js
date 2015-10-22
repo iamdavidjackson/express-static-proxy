@@ -13,13 +13,19 @@ var ExpressStaticProxy = function(options) {
 		regex: 'jpeg|gif|png|jpg|js|css|ico|woff|svg|ttf|json|map'
 	});
 
-	var proxy = httpProxy.createProxyServer({
-		target: url.format(options.target),
-		changeOrigin: options.changeOrigin || true
-	});
+	// passes any settings from the options object into http-proxy
+	var httpProxyOptions = _.defaults({
+		target: url.format(options.target)
+	}, options);
 
+	var proxy = httpProxy.createProxyServer(httpProxyOptions);
+	
 	proxy.on('error', function(err, req, res) {
 		console.log(err);
+	});
+
+	proxy.on('proxyRes', function(proxyRes, req, res) {
+		//console.log(proxyRes);
 	});
 
 	var regExp = new RegExp('\.(' + options.regex + ')$', 'i');
